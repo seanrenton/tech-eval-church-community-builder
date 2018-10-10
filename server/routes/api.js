@@ -1,5 +1,4 @@
-var config = require('../config/database'),
-    mongoose = require('mongoose'),
+var mongoose = require('mongoose'),
     passport = require('passport'),
     jwt = require('jsonwebtoken'),
     mongojs = require('mongojs'),
@@ -33,132 +32,57 @@ var config = require('../config/database'),
 
 
 
-router.get('/displayorders', function (req, res) {
-    newOrder.find({
-        orderNumber: {
-            $exists: true
-        }
-    }, function (err, order) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(order);
-            res.send(order);
-        }
-    }).sort({ orderNumber: -1 }).limit(50);
+router.get('/displayNowShowingMovies', function (req, res) {
 
-})
+    request('https://api.themoviedb.org/3/movie/now_playing?api_key=ffa916a67f415c5064bd7a9c8409c38a', function (error, response, result) {
 
+        var movieDBResult = JSON.parse(result);
 
-router.post('/displayfilteredorders', function (req, res) {
-    // need to handle sequel injection
+        console.log(movieDBResult);
 
-    var industryFilter = {};
-    var statusFilter = {};
-    var companyFilter = {};
-    var totalFilter = {};
-    var orderFilter = {};
-
-
-    var queryObject = { $and: [] };
-    var objectsInQuery = 0;
-    var queryArray = [];
-
-
-
-
-
-    if (req.body.industry) {
-        industryFilter['sIndustry'] = req.body.industry;
-        objectsInQuery++;
-        queryArray.push(industryFilter);
-    } else {
-        industryFilter = '';
-    }
-
-    if (req.body.status) {
-        statusFilter['status'] = req.body.status;
-        objectsInQuery++
-        queryArray.push(statusFilter);
-    } else {
-        statusFilter = '';
-    }
-
-    if (req.body.companyName) {
-        companyFilter['bCompany'] = { "$regex": req.body.companyName, "$options": "i" };
-        objectsInQuery++
-        queryArray.push(companyFilter);
-    } else {
-        companyFilter = '';
-    }
-
-    if (req.body.total) {
-        totalFilter['invoiceFinalTotal'] = req.body.total;
-        objectsInQuery++
-        queryArray.push(totalFilter);
-    } else {
-        totalFilter = '';
-    }
-
-    if (req.body.orderNumber) {
-        orderFilter['orderNumber'] = req.body.orderNumber;
-        objectsInQuery++
-        queryArray.push(orderFilter);
-    } else {
-        orderFilter = '';
-    }
-
-    var dummyMongoPass = {};
-
-    dummyMongoPass['_id'] = { $exists: true }
-
-    queryArray.push(dummyMongoPass);
-    // if (objectsInQuery.length > 1) {
-
-    newOrder.find({ $and: queryArray }, function (err, orders) {
-        if (err) {
-            console.log(err);
-        }
-        res.send(orders);
-
+        res.send(movieDBResult);
     })
-    // } else {
-    //     // newOrder.find({})
-    // }
 
 })
 
-router.get('/displayorders/:orderNumber', function (req, res) {
-    newOrder.find({
+router.get('/displayPopularMovies', function (req, res) {
 
-        orderNumber: req.params.orderNumber
+    request('https://api.themoviedb.org/3/movie/popular?api_key=ffa916a67f415c5064bd7a9c8409c38a', function (error, response, result) {
 
-    }, function (err, order) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(order);
-            res.send(order);
-        }
+        var movieDBResult = JSON.parse(result);
+
+        console.log(movieDBResult);
+        res.send(movieDBResult);
     })
 
 })
 
 
-router.get('/displayFilteredOrders/:orderFilter', function (req, res) {
-    var orderSearch = req.params.orderFilter
-    console.log(orderSearch)
-    newOrder.find({ orderNumber: orderSearch }, function (err, orderResult) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log(orderResult);
-            res.send(orderResult);
-        }
+router.get('/displayTopRatedMovies', function (req, res) {
+
+    request('https://api.themoviedb.org/3/movie/top_rated?api_key=ffa916a67f415c5064bd7a9c8409c38a', function (error, response, result) {
+
+        var movieDBResult = JSON.parse(result);
+
+        console.log(movieDBResult);
+        res.send(movieDBResult);
     })
+
 })
 
+router.get('/displayMovie/:id', function (req, res) {
 
+    var params = req.params.id
+
+    request('https://api.themoviedb.org/3/movie/' + params + '?api_key=ffa916a67f415c5064bd7a9c8409c38a', function (error, response, result) {
+
+        var movieDBResult = JSON.parse(result);
+
+        console.log(movieDBResult);
+        res.send(movieDBResult);
+    })
+
+})
 
 
 

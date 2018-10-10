@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { OrderDisplayComponent } from '../components/order-display/order-display.component';
 import { MovieListComponent } from '../components/movie-list/movie-list.component';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -13,32 +12,25 @@ export class MovieService {
 
     constructor(private http: Http) { }
 
-    displayMovies() {
-        return this.http.get('/api/displayMovies')
+    displayNowShowingMovies() {
+        return this.http.get('/api/displayNowShowingMovies')
             .map(res => res.json());
     }
 
-    displayFilteredMovies(filteringObject) {
-        return this.http.post('/api/displayfilteredmovies/', filteringObject)
+    displayPopularMovies() {
+        return this.http.get('/api/displayPopularMovies')
             .map(res => res.json());
     }
 
-
-    getMovie(id: number) {
-        return this.http.get('/api/displaymovies/' + id)
+    displayTopRatedMovies() {
+        return this.http.get('/api/displayTopRatedMovies')
             .map(res => res.json());
     }
 
-    getNewMovie(orderNumber: number) {
+    displayMovie(id: number) {
 
-        return this.http.get('/api/displayorders/' + orderNumber)
+        return this.http.get('/api/displayMovie/' + id)
             .map(res => res.json());
-    }
-
-
-    filterMovies(orderFilter) {
-        return this.http.get('/api/displayFilteredOrders/' + orderFilter)
-            .map(res => res.json())
     }
 
 }

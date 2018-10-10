@@ -1,3 +1,60 @@
-<p>
-  movie-list works!
-</p>
+<div class="container">
+
+
+    <h1 class="text-center">Movies List</h1>
+
+
+    <div class="row text-center">
+        <div class="col-md-4">
+            <button class="movieButton" (click)="displayNowShowingMovies()">Now Showing in Theatres</button>
+        </div>
+        <div class="col-md-4">
+            <button class="movieButton" (click)="displayPopularMovies()">Most Popular</button>
+        </div>
+        <div class="col-md-4">
+            <button class="movieButton" (click)="displayTopRatedMovies()">Top Rated</button>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="col-md-12 text-center" *ngIf="nowShowing == true">
+        <h2>Now Showing in Theatres Movies</h2>
+    </div>
+    <div class="col-md-12 text-center" *ngIf="topRated == true">
+        <h2>Top Rated Movies</h2>
+    </div>
+    <div class="col-md-12 text-center" *ngIf="mostPopular == true">
+        <h2>Most Popular Movies</h2>
+    </div>
+
+    <br>
+
+    <div class="row" *ngIf="movies[0]">
+        <div class="col-xs-4 moviepadding text-center headerfont">
+            Title
+        </div>
+        <div class="col-xs-4 moviepadding text-center headerfont">
+            Popularity
+        </div>
+        <div class="col-xs-4 moviepadding text-center headerfont">
+            Average Vote
+        </div>
+    </div>
+
+    <div class='row movieDetailSelect' style="border: 1px solid #00abc5" *ngFor="let Movie of movies">
+
+        <a [routerLink]="['/movie-details', Movie.id]" class="movieDetailSelect">
+            <div class="col-xs-4 moviepadding text-center buttonfont">
+                {{ Movie.title}}
+            </div>
+            <div class="col-xs-4 moviepadding text-center buttonfont">
+                {{ Movie.popularity }}
+            </div>
+            <div class="col-xs-4 moviepadding text-center buttonfont">
+                {{ Movie.vote_average }}
+            </div>
+        </a>
+    </div>
+
+</div>

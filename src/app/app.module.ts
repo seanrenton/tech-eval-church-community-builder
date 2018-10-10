@@ -7,31 +7,31 @@ import { HttpModule } from '@angular/http';
 
 
 import { AppComponent } from './app.component';
-import { EditOrderComponent } from './components/edit-order/edit-order.component';
 import { FlashMessagesModule } from 'ngx-flash-messages';
 import { FileUploader } from 'ng2-file-upload';
 
 
-import { OrdersServiceService } from './services/orders-service.service';
 import { MovieService } from './services/movie.service';
 
-
-import { FocusDirective } from './directives/focus.directive';
-import { OrderByPipe } from './components/order-display/order-by.pipe';
 import { MovieListComponent } from './components/movie-list/movie-list.component';
 import { MovieDetailsComponent } from './components/movie-details/movie-details.component';
 
 
 
 const appRoutes: Routes = [
+    {
+        path: '',
+        component: MovieListComponent
+    },
+    {
+        path: 'movie-details/:id',
+        component: MovieDetailsComponent
+    }
 ]
 
 @NgModule({
     declarations: [
         AppComponent,
-        EditOrderComponent,
-        FocusDirective,
-        OrderByPipe,
         MovieListComponent,
         MovieDetailsComponent
     ],
@@ -42,7 +42,7 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes),
         FlashMessagesModule
     ],
-    providers: [OrdersServiceService, FormBuilder, MovieService, OrderByPipe],
+    providers: [FormBuilder, MovieService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

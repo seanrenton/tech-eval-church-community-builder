@@ -1,3 +1,38 @@
-<p>
-  movie-details works!
-</p>
+<div class="container">
+
+    <h1 class="text-center">Movie Details for {{ movieDetails.title }}</h1>
+
+    <h3>Overview:</h3>
+    <p>{{ movieDetails.overview }}</p>
+
+    <br>
+
+    <h3>Status of Movie:</h3>
+    <p>{{ movieDetails.status }}</p>
+
+    <br>
+
+    <h3>Release Date:</h3>
+    <p>{{ movieDetails.release_date }}</p>
+
+    <br>
+
+    <h3>Popularity:</h3>
+    <p>{{ movieDetails.popularity }}</p>
+
+    <br>
+
+    <h3>Average Rating:</h3>
+    <p>{{ movieDetails.average_vote }}</p>
+
+    <br>
+
+    <h3>Movie Budget:</h3>
+    <p>{{ movieDetails.budget }}</p>
+
+    <br>
+
+    <h3>Production Companies:</h3>
+    <div *ngFor="let companies of movieDetails.production_companies">{{ companies.name }}</div>
+
+</div>
