@@ -1,0 +1,140 @@
+table, th, td {
+    border: 1px solid #00abc5;
+}
+
+.displaybutton {
+    background-color: #00abc5;
+    color: white;
+    border-radius: 10px;
+    float: right;
+}
+.headerfont {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.bottomborder {
+    border-bottom: 2px solid #00abc5;
+}
+
+.orderdetailselect:hover {
+    background-color: #80eeff;
+    color: black;
+}
+
+.orderborder {
+    border: 2px solid #00abc5;
+    
+    /* border-bottom: none; */
+    padding: 5px;
+}
+
+.filterborder {
+    border: 2px solid #00abc5;
+}
+
+.orderpadding {
+    padding: 10px;
+}
+
+.orderfont {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+.selectedfont {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #00ABC5;
+}
+
+.editorderunderline {
+    border-bottom: 2px solid #00abc5;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.sortsize {
+    font-size: 10px;
+}
+
+@media (max-width: 700px){
+    .sortsize{
+        font-size: 8px;
+    }
+    .orderfont {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 600px){
+    .sortsize{
+        font-size: 5px;
+    }
+    .orderfont {
+        font-size: 10px;
+    }
+}
+
+.filterInput {
+    font-size: 10px;
+}
+
+.processing {
+    background-color: #FEB813;    
+    color: black;
+    
+}
+
+.downpaymentrequested {
+    background-color: #FEB813;    
+    color: black;
+    
+}
+
+.invoicepartiallypaid {
+    background-color:  #330033;
+    color: black;
+}
+
+.shipped {
+    background-color: #8CC73F;
+    color: black;
+}
+
+.completed {
+    background-color: #00ABC5;
+    color: black;
+    
+}
+
+.submitted {
+    background-color: #FEB813;
+    color: black;
+    
+}
+
+.approvalNeeded {
+    background-color: red;
+    color: black;
+    
+}
+
+.cancelled {
+    background-color: grey;
+    color: black;
+    
+}
+
+.draft {
+    background-color: #A9937B;
+    color: black;
+    
+}
+
+.NA {
+    background-color: #A9937B;
+    color: black;
+    
+}

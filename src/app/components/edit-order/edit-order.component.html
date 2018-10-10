@@ -1,0 +1,991 @@
+<!-- <button type="button" class="btn displaybutton" (click)="goBack()">GO back</button> -->
+
+
+<!-- <div class="row"> -->
+<script src='pdfmake.min.js'></script>
+<script src='vfs_fonts.js'></script>
+<br>
+<br>
+<!-- <div class="col-sm-12 text-center"> -->
+<div *ngIf="spinner" class="spinner" id="spinner"></div>
+<div class="text-center container" *ngIf="spinner == false">
+    <div *ngIf="editOrder === true">
+        <h1 class="editorderunderline text-center">Edit Order {{orderEdited.orderNumber}}</h1>
+        <br>
+
+
+        <br>
+        <!-- <form #editOrderForm="ngForm" data-toggle="validator" (ngSubmit)="onSubmitUpdatedOrder(editOrderForm.value)"> -->
+
+
+        <h2 class="text-center">Shipping and Billing Info</h2>
+
+        <div *ngIf="userLevel >= 5" class="text-center" (click)="contactShowMethod()">
+            <button *ngIf="!addSalesForceAccountFlag" type="button" class="btn btn-default" (click)="showAddSalesForceAccount()">
+                <span class="glyphicon glyphicon-plus"> Add SalesForce Contact By Name</span>
+            </button>
+            <button *ngIf="addSalesForceAccountFlag" type="button" class="btn btn-default" (click)="hideAddSalesForceAccount();">
+                <span class="glyphicon glyphicon-minus"> Hide SalesForce Contact By Name</span>
+            </button>
+            <br>
+            <br>
+            <div *ngIf="addSalesForceAccountFlag">
+
+                <input #searchBox id="search-box" [app-focus]="contactTriggeringEventEmitter" (keyup)="search(searchBox.value)" class="help-block inputtextsize text-center"
+                    type="text" placeholder="Name">
+                <br>
+                <br>
+
+
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Name</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>Email</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>Shipping Address</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p> </p>
+                        </div>
+                    </div>
+                    <div *ngFor="let contact of contacts | async" (click)="populateContactWithAccountInformation(contact)">
+                        <div class="row productAdd">
+                            <div class="col-sm-3">
+                                <p>{{contact.FirstName}} {{contact.LastName}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <p>{{contact.Email}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <p>{{contact.MailingStreet}}</p>
+                                <p>{{contact.MailingCity}}</p>
+                                <p>{{contact.MailingPostalCode}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <p class="glyphicon glyphicon-plus "></p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <br>
+                </div>
+            </div>
+
+
+        </div>
+
+        <p class="help-block inputtextsize text-center">Is Shipping Same as Billing?
+            <input type="checkbox" name="billingtoo" [(ngModel)]='billingtoo' (click)="billingToShipping()">
+        </p>
+        <br>
+        <div class="row text-center">
+            <div class="col-sm-6">
+                <label for="sFirstName" class="editorderunderline">Shipping First Name</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sFirstName" placeholder="First Name"
+                    required [(ngModel)]='orderEdited.sFirstName'>
+                <div *ngIf="errorCheck && !orderEdited.sFirstName" class="alert alert-danger errorsize">First Name Is Required</div>
+                <!-- && errorCheck -->
+
+
+                <label for="sLastName" class="editorderunderline">Shipping Last Name</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sLastName" placeholder="Last Name"
+                    required [(ngModel)]='orderEdited.sLastName'>
+                <div *ngIf="errorCheck && !orderEdited.sLastName" class="alert alert-danger errorsize">Last Name Is Required</div>
+
+                <label for="sCompany" class="editorderunderline">Shipping Company Name</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sCompany" placeholder="Shipping Company Name"
+                    required [(ngModel)]='orderEdited.sCompany' maxlength="50">
+                <div *ngIf="errorCheck && !orderEdited.sCompany" class="alert alert-danger errorsize">Shipping Company Is Required</div>
+                <div *ngIf="orderEdited.sCompany && orderEdited.sCompany.length >= 50" class="alert alert-danger errorsize">Shipping Company Must Be Less Then 50 Characters</div>
+
+
+                <label for="sAddress1" class="editorderunderline">Shipping Address 1</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sAddress1" placeholder="Shipping Address"
+                    required [(ngModel)]='orderEdited.sAddress1'>
+                <div *ngIf="errorCheck && !orderEdited.sAddress1" class="alert alert-danger errorsize"> Shipping Address Is Required</div>
+
+                <label for="sCity" class="editorderunderline">Shipping City</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sCity" placeholder="Shipping City"
+                    required [(ngModel)]='orderEdited.sCity'>
+                <div *ngIf="errorCheck && !orderEdited.sCity" class="alert alert-danger errorsize">Shipping City Is Required</div>
+
+                <!-- <label for="sState" class="editorderunderline">Shipping State</label>
+          <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sState" placeholder="Shipping State"
+            required [(ngModel)]='orderEdited.sState'> -->
+
+                <label for="sZip" class="editorderunderline">Shipping Zip Code</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sZip" placeholder="Shipping Zip Code"
+                    required [(ngModel)]='orderEdited.sZip'>
+                <div *ngIf="errorCheck && !orderEdited.sZip" class="alert alert-danger errorsize">Shipping Postal Code Is Required</div>
+
+                <!-- <label for="sCountry" class="editorderunderline">Shipping Country</label>
+          <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sCountry" placeholder="Shipping Country"
+            required [(ngModel)]='orderEdited.sCountry'> -->
+
+                <label for="bEmail" class="editorderunderline">Email</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sEmail" placeholder="Email"
+                    required [(ngModel)]='orderEdited.sEmail'>
+                <div *ngIf="errorCheck && !orderEdited.sEmail" class="alert alert-danger errorsize">Shipping Email Is Required</div>
+
+                <label for="bPhone" class="editorderunderline">Phone</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sPhone" placeholder="Phone Number"
+                    required [(ngModel)]='orderEdited.sPhone'>
+                <div *ngIf="errorCheck && !orderEdited.sPhone" class="alert alert-danger errorsize">Shipping Phone Is Required</div>
+
+                <p class="countryinputheader help-block">Country</p>
+                <select class="dropdownsize" (click)="isUnitedStatesShipping()" type="text" name="orderEdited.sCountry" placeholder="Country"
+                    required [(ngModel)]="orderEdited.sCountry" (keyup)="isUnitedStatesShipping()" (blur)="isUnitedStatesShipping(); onSubmitUpdatedOrder(orderEdited);">
+                    <option value="US" (click)="isUnitedStatesShipping()">United States</option>
+                    <option value="Canada" (click)="isUnitedStatesShipping()">Canada</option>
+                </select>
+                <div *ngIf="errorCheck && !orderEdited.sCountry" class="alert alert-danger errorsize">Shipping Country Is Required</div>
+
+                <br>
+                <br>
+                <div *ngIf="unitedstatesshipping === true">
+                    <p class="countryinputheader help-block">State</p>
+                    <select class="dropdownsize" name="orderEdited.sState" [(ngModel)]="orderEdited.sState">
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="DC">District Of Columbia</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="PR">Puerto Rico</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </select>
+
+                    <div *ngIf="errorCheck && !orderEdited.sState" class="alert alert-danger errorsize">Shipping State Is Required</div>
+                </div>
+
+                <br>
+                <div *ngIf="canadashipping === true">
+                    <p class="countryinputheader help-block">Province</p>
+                    <select class="dropdownsize" required name="orderEdited.sState" [(ngModel)]="orderEdited.sState">
+                        <option value="AB">Alberta</option>
+                        <option value="BC">British Columbia</option>
+                        <option value="MB">Manitoba</option>
+                        <option value="NB">New Brunswick</option>
+                        <option value="NL">Newfoundland and Labrador</option>
+                        <option value="NS">Nova Scotia</option>
+                        <option value="ON">Ontario</option>
+                        <option value="PE">Prince Edward Island</option>
+                        <option value="QC">Quebec</option>
+                        <option value="SK">Saskatchewan</option>
+                        <option value="NT">Northwest Territories</option>
+                        <option value="NU">Nunavut</option>
+                        <option value="YT">Yukon</option>
+                    </select>
+                    <div *ngIf="errorCheck && !orderEdited.sState" class="alert alert-danger errorsize">Shipping State Is Required</div>
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <div class="col-sm-6" *ngIf="billingtoo != true">
+
+
+
+
+                <label for="bFirstName" class="editorderunderline">Billing First Name</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bFirstName" placeholder="First Name"
+                    required [(ngModel)]='orderEdited.bFirstName'>
+                <div *ngIf="errorCheck && !orderEdited.bFirstName" class="alert alert-danger errorsize">First Name Is Required</div>
+
+                <label for="bLastName" class="editorderunderline">Billing Last Name</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bLastName" placeholder="Last Name"
+                    required [(ngModel)]='orderEdited.bLastName'>
+                <div *ngIf="errorCheck && !orderEdited.bLastName" class="alert alert-danger errorsize">Last Name Is Required</div>
+
+                <label for="bCompany" class="editorderunderline">Billing Company</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bCompany" placeholder="Billing Company Name"
+                    required [(ngModel)]='orderEdited.bCompany' maxlength="50">
+                <div *ngIf="errorCheck && !orderEdited.bCompany" class="alert alert-danger errorsize">Billing Company Is Required</div>
+                <div *ngIf="orderEdited.bCompany && orderEdited.bCompany.length >= 50" class="alert alert-danger errorsize">Billing Company Must Be Less Then 50 Characters</div>
+
+                <label for="bAddress1" class="editorderunderline">Billing Address 1</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bAddress1" placeholder="Billing Address"
+                    required [(ngModel)]='orderEdited.bAddress1'>
+                <div *ngIf="errorCheck && !orderEdited.bAddress1" class="alert alert-danger errorsize"> Billing Address Is Required</div>
+
+                <label for="bCity" class="editorderunderline">Billing City</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bCity" placeholder="Billing City"
+                    required [(ngModel)]='orderEdited.bCity'>
+                <div *ngIf="errorCheck && !orderEdited.bCity" class="alert alert-danger errorsize">Billing City Is Required</div>
+
+
+
+                <label for="bZip" class="editorderunderline">Billing Zip Code</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bZip" placeholder="Billing Zip Code"
+                    required [(ngModel)]='orderEdited.bZip'>
+                <div *ngIf="errorCheck && !orderEdited.bZip" class="alert alert-danger errorsize">Billing Postal Code Is Required</div>
+
+
+
+                <label for="bEmail" class="editorderunderline">Email</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bEmail" placeholder="Email"
+                    required [(ngModel)]='orderEdited.bEmail'>
+                <div *ngIf="errorCheck && !orderEdited.bEmail" class="alert alert-danger errorsize">Billing Email Is Required</div>
+
+                <label for="bPhone" class="editorderunderline">Phone</label>
+                <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.bPhone" placeholder="Phone Number"
+                    required [(ngModel)]='orderEdited.bPhone'>
+                <div *ngIf="errorCheck && !orderEdited.bPhone" class="alert alert-danger errorsize">Billing Phone Is Required</div>
+
+
+                <p class="countryinputheader help-block">Country</p>
+                <select class="dropdownsize" (click)="isUnitedStatesBilling()" type="text" name="orderEdited.bCountry" placeholder="Country"
+                    required [(ngModel)]="orderEdited.bCountry" (keyup)="isUnitedStatesBilling()" (blur)="isUnitedStatesBilling(); onSubmitUpdatedOrder(orderEdited);">
+                    <option value="US" (click)="isUnitedStatesBilling()">United States</option>
+                    <option value="Canada" (click)="isUnitedStatesBilling()">Canada</option>
+                </select>
+                <div *ngIf="errorCheck && !orderEdited.bCountry" class="alert alert-danger errorsize">Billing Country Is Required</div>
+
+                <br>
+                <br>
+                <div *ngIf="unitedstatesbilling === true">
+                    <p class="countryinputheader help-block">State</p>
+                    <select class="dropdownsize" name="orderEdited.bState" placeholder="State" [(ngModel)]="orderEdited.bState">
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="DC">District Of Columbia</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="PR">Puerto Rico</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </select>
+
+                    <div *ngIf="errorCheck && !orderEdited.bState" class="alert alert-danger errorsize">Billing State Is Required</div>
+                </div>
+
+
+                <br>
+                <div *ngIf="canadabilling === true">
+                    <p class="countryinputheader help-block">Province</p>
+                    <select class="dropdownsize" placeholder="State" required name="orderEdited.bState" [(ngModel)]="orderEdited.bState">
+                        <option value="AB">Alberta</option>
+                        <option value="BC">British Columbia</option>
+                        <option value="MB">Manitoba</option>
+                        <option value="NB">New Brunswick</option>
+                        <option value="NL">Newfoundland and Labrador</option>
+                        <option value="NS">Nova Scotia</option>
+                        <option value="ON">Ontario</option>
+                        <option value="PE">Prince Edward Island</option>
+                        <option value="QC">Quebec</option>
+                        <option value="SK">Saskatchewan</option>
+                        <option value="NT">Northwest Territories</option>
+                        <option value="NU">Nunavut</option>
+                        <option value="YT">Yukon</option>
+                    </select>
+                    <div *ngIf="errorCheck && !orderEdited.bState" class="alert alert-danger errorsize">Billing State Is Required</div>
+                </div>
+
+
+            </div>
+
+
+
+
+            <br>
+            <div class="col-sm-12 editorderunderline" style="margin-bottom: 10px"></div>
+            <br>
+            <br>
+
+
+            <div class="col-sm-6">
+                <label for="orderEdited.sMiscNotes" class="editorderunderline text-center">Miscellaneous Notes</label>
+                <textarea class="help-block inputtextsize text-center form-control col-sm-6" type="text" placeholder="Miscellaneous Notes"
+                    name="orderEdited.sMiscNotes" [(ngModel)]="orderEdited.sMiscNotes"></textarea>
+            </div>
+            <br>
+            <br>
+            <div class="col-sm-6">
+                <label for="orderEdited.sDeadLine" class="editorderunderline text-center">Delivery Dead Line Notes</label>
+                <input class="help-block inputtextsize text-center form-control col-sm-6" type="text" placeholder="Delivery Dead Line Notes"
+                    name="orderEdited.sDeadLine" [(ngModel)]="orderEdited.sDeadLine">
+            </div>
+        </div>
+        <div *ngIf="errorCheck && !orderEdited.sDeadLine" class="alert alert-danger errorsize">Please Add A Delivery Dead Line</div>
+        <br>
+        <br>
+        <p>Current Sales Person is: {{orderEdited.salesName}}</p>
+        <div *ngIf="userLevel >= 10" class="row">
+            <!-- AREA FOR BRIEBUG TO LOOK AT IN FUTURE -->
+            <label class="help-block text-center">Change Sales Person by Name:</label>
+            <select class="dropdownsize col-sm-offset-4 col-sm-4 text-center" (change)="assignSalesPerson()" [(ngModel)]="tempUser">
+                <option *ngFor="let name of user" [ngValue]="name">{{ name.name }}</option>
+            </select>
+        </div>
+        <!-- <div *ngIf="userLevel >= 10 && orderEdited.salesName" class="row">
+            <label class="help-block text-center">Select SalesPerson Name:</label>
+            <p class="dropdownsize col-sm-offset-4 col-sm-4 text-center">{{ orderEdited.salesName }}</p>
+        </div> -->
+
+    </div>
+    <br>
+
+
+
+    <!-- <div class="row">
+        <h2 class="orderpadding">Order Details</h2>
+        <div class="col-sm-12">
+
+          <label for="total" class="editorderunderline">Total</label>
+          <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.total" placeholder="Sub Total"
+            required [(ngModel)]='orderEdited.total'>
+
+          <label for="finalTotal" class="editorderunderline">Final Total</label>
+          <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.finalTotal" placeholder="Total"
+            required [(ngModel)]='orderEdited.finalTotal'>
+
+          <label for="tax" class="editorderunderline">Total Tax</label>
+          <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.tax" placeholder="Tax" required
+            [(ngModel)]='orderEdited.tax'>
+        </div>
+      </div> -->
+
+    <!-- <div *ngIf="userLevel > 3" class="text-center">
+        <div class="row">
+            <div class="col-sm-6">
+                <button [ngClass]="{'opacity65': invoicing == false}" type="button" class="btn btn-default emagiTabInvoice" (click)="showInvoicing()">
+                    Accepted Quote / Invoice
+                </button>
+            </div>
+            <div class="col-sm-6">
+                <button [ngClass]="{'opacity65': invoicing == true}" type="button" class="btn btn-default emagiTab" (click)="hideInvoicing()">
+                    Production
+                </button>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="text-center productionBorder" *ngIf="userLevel > 3" id="OrdersSection">
+        <div class="invoicepadding">
+            <h3 class="headerfont bottomborder">Line Items</h3>
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="lineitems">Product SKU</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="lineitems">Name</label>
+                </div>
+                <div class="col-sm-1">
+                    <label for="lineitems">List Price</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="lineitems">Discount Price</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="lineitems">Quantity</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="lineitems">Line Total</label>
+                </div>
+                <div class="col-sm-1">
+                    <label for="lineitems">Delete</label>
+                </div>
+
+
+
+            </div>
+
+
+            <div *ngFor="let lineitem of orderEdited.lineItems">
+                <div class="row">
+                    <div class="col-sm-2">
+                        {{lineitem.sku}}
+                    </div>
+                    <div class="col-sm-2">
+                        {{lineitem.name}}
+                    </div>
+                    <div class="col-sm-1">
+                        {{lineitem.unitPrice | currency:'USD':true}}
+                    </div>
+                    <div class="col-sm-2">
+                        <input (keyup.enter)="updateTotals()" (blur)="updateTotals()" class="help-block inputtextsize text-center form-control col-sm-12"
+                            type="text" name="{{lineitem.discountPrice}}" placeholder="Discount Price" required [(ngModel)]='lineitem.discountPrice'>
+                    </div>
+                    <div class="col-sm-2">
+                        <input (keyup.enter)="updateTotals()" (blur)="updateTotals()" class="help-block inputtextsize text-center form-control col-sm-12"
+                            type="text" name="{{lineitem.qty}}" placeholder="Quantity" required [(ngModel)]='lineitem.qty'>
+                    </div>
+                    <div class="col-sm-2">
+                        {{lineitem.total | currency:'USD':true}}
+                    </div>
+                    <div class="col-sm-1" (click)="deleteLineItem(lineitem)">
+                        <p class="glyphicon glyphicon-minus"></p>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <!-- <div class="row">
+                <div class="col-sm-3 totalborders totalpadding">
+                    <p class="orderfont">Subtotal: {{subtotal | currency:'USD':true}}</p>
+                </div>
+                <div class="col-sm-3 totalborders totalpadding">
+                    <p class="orderfont inline">Shipping:
+                        <input class="orderfontshipping text-center" type="text" (keyup.enter)="updateTotals()" (blur)="updateTotals()" placeholder="Add Shipping"
+                            name="orderEdited.shippingCost" [(ngModel)]="orderEdited.shippingCost">
+                    </p>
+                    
+                </div>
+                <div class="col-sm-3 totalborders totalpadding">
+                    <p class="orderfont">Tax: {{orderEdited.tax | currency:'USD':true}}</p>
+                </div>
+                <div class="col-sm-3 totalborders totalpadding">
+                    <p class="orderfont">Total: {{orderEdited.finalTotal | currency:'USD':true}}</p>
+                </div>
+            </div> -->
+            <br>
+            <!-- <div>
+                    <button type="button" class="btn taxbutton" (click)="calculateTax(orderEdited)">Click to calculate Tax {{taxJarTax}}</button>
+                    <br>
+                    <br>
+                    <button type="button" class="btn taxbutton" (click)="taxExempt(orderEdited)">Click for Tax Exempt</button>
+                    <br>
+                    <br>
+                    <div *ngIf="hasTaxBeenCalculated === false && errorCheck" class="alert alert-danger errorsize em">Make Sure To Select Calculate Tax/Tax Exempt Before Submitting Your Order</div>
+                    <br>
+                    <br>
+                </div> -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <div (click)="productShowMethod()">
+                        <button *ngIf="!addProductFlag" type="button" class="btn btn-default" (click)="showAddProduct();">
+                            <span class="glyphicon glyphicon-plus"> Add Product by Name</span>
+                        </button>
+                        <button *ngIf="addProductFlag" type="button" class="btn btn-default" (click)="hideAddProduct()">
+                            <span class="glyphicon glyphicon-minus"> Hide Add Product Field</span>
+                        </button>
+                    </div>
+                    <div>
+                        <br>
+                        <div *ngIf="addProductFlag">
+                            <input #searchBoxProdId id="addingProductId" [app-focus]="productTriggeringEventEmitter" (keyup)="searchNewProductId(searchBoxProdId.value)"
+                                class="help-block inputtextsize text-center form-control" type="text" name="newLineItem.name"
+                                placeholder="Add Product" required [(ngModel)]='newLineItem.name'>
+                            <!-- Sean, how do we get these to show only after search result finished> -->
+                            <div class="" class="overlayPositioning">
+                                <div class="row productAdd" *ngIf="(newLineItems | async)?.length > 0">
+                                    <div class="col-sm-3">
+                                        <p>SKU</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <p>Item Name</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <p>List Price</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <p></p>
+                                    </div>
+                                </div>
+                                <!-- <div *ngIf="goingGreen == true">Product Added</div> -->
+                                <div *ngFor="let LineItem of newLineItems | async; let i = index" (click)="populateFromNewLineItem(LineItem); updateTotals()"
+                                    (click)="settingActiveIndex(i)">
+                                    <div class="row productAdd addingProduct">
+                                        <div class="col-sm-3">
+                                            <p>{{LineItem.SKU}}</p>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p>{{LineItem.ItemName}}</p>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p>{{LineItem.CustomerPrice | currency:'USD':true}}</p>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <p class="glyphicon glyphicon-plus "></p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div (click)="wallbuilderShowMethod()">
+                        <button *ngIf="!addWallBuilderPlanFlag" type="button" class="btn btn-default" (click)="showAddWallBuilderPlan();">
+                            <span class="glyphicon glyphicon-plus "> Add WallBuilder Plans by Name</span>
+                        </button>
+                        <button *ngIf="addWallBuilderPlanFlag" type="button" class="btn btn-default" (click)="hideAddWallBuilderPlan();">
+                            <span class="glyphicon glyphicon-minus "> Hide Add WallBuilderPlan Field</span>
+                        </button>
+                    </div>
+                    <br>
+                    <div *ngIf="addWallBuilderPlanFlag">
+                        <input #searchBoxPlanName id="addingWallBuilderPlanName" [app-focus]="wallbuilderTriggeringEventEmitter" (keyup)="searchNewWallBuilderName(searchBoxPlanName.value)"
+                            class="help-block inputtextsize text-center form-control" type="text" name="wallBuilderPlan.planName"
+                            placeholder="Add WallBuilderPlan" required [(ngModel)]='wallBuilderPlan.planName'>
+                        <div class="overlayPositioning">
+                            <div class="row productAdd" *ngIf="(wallBuilderPlan | async)?.length > 0">
+                                <div class="col-sm-4">
+                                    <p>ID</p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p>Name</p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p></p>
+                                </div>
+                            </div>
+                            <div *ngFor="let plan of wallBuilderPlan | async; let i = index" (click)="populateFromWallBuilderPlans(plan); hideAddWallBuilderPlan(); updateTotals()"
+                                (click)="settingActiveIndex(i)">
+                                <div class="row productAdd addingProduct" click="updateTotals()">
+                                    <div class="col-sm-4">
+                                        <p>{{plan.id}}</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p>{{plan.planName}}</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p class="glyphicon glyphicon-plus "></p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+            <br>
+
+        </div>
+    </div>
+
+    
+
+
+    <div class="text-center productionBorder invoicepadding" *ngIf="invoicing == false && userLevel == 3" id="OrdersSection">
+        <div class="invoicepadding">
+
+            <h3 class="headerfont bottomborder">Distributor Order Production Line Items</h3>
+            <div class="row">
+                <div class="col-xs-4">
+                    <label for="lineitems">Product SKU</label>
+                </div>
+                <div class="col-xs-4">
+                    <label for="lineitems">Name</label>
+                </div>
+                <div class="col-xs-4">
+                    <label for="lineitems">Quantity</label>
+                </div>
+            </div>
+
+
+            <div *ngFor="let lineitem of orderEdited.lineItems">
+                <div class="row">
+                    <div class="col-xs-4">
+                        {{lineitem.sku}}
+                    </div>
+                    <div class="col-xs-4">
+                        {{lineitem.name}}
+                    </div>
+                    <div class="col-xs-4">
+                        {{lineitem.qty}}
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-offset-4 col-sm-4">
+                    <button type="button" class="btn taxbutton" (click)="generatePDFInvoiceForDistributor(orderEdited)">Generate PDF</button>
+                </div>
+                <br>
+                <!-- <br>
+                <div *ngIf="hasTaxBeenCalculated === false && errorCheck" class="alert alert-danger errorsize em">Make Sure To Select Calculate Tax/Tax Exempt Before Submitting Your Order</div> -->
+
+                <br>
+                <br>
+            </div>
+
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div *ngIf="orderEdited.orderTotalCoGs && userLevel > 5">
+        <label class="editorderunderline orderfont text-center">CoGs For Order: </label>
+        <p class="help-block orderfont text-center">{{ orderEdited.orderTotalCoGs | currency:'USD':true }}</p>
+    </div>
+    <br>
+    <br>
+
+    
+    <div *ngIf="errorCheck && !orderEdited.lineItems[0]" class="alert alert-danger errorsize text-center">Please Make Sure You Have Your Production Line Items</div>
+
+
+    <br>
+    <br>
+
+
+    <div *ngIf="userLevel >= 5" class="row">
+        <label for="orderEdited.wbQuoteURL" class="editorderunderlineinvoicing text-center">Quote Wall Builder Link URL</label>
+        <input type="url" class="help-block inputtextsize text-center form-control col-sm-offset-8 col-sm-8" placeholder="Quote Wall Builder Link URL"
+            name="orderEdited.wbQuoteURL" [(ngModel)]="orderEdited.wbQuoteURL">
+        <br>
+        <br>
+    </div>
+    <br>
+
+    <!-- <p>Need a button to pull closed Won Quotes from Salesforce and populate invoice Line Items, this will be similar to
+            the salesforce contact pull</p> -->
+
+
+    <div class="row">
+        <label for="orderEdited.wbFinalURL" class="editorderunderline text-center">Final Wall Builder Link URL</label>
+        <input type="url" class="help-block inputtextsize text-center form-control" placeholder="Final Wall Builder Link URL" name="orderEdited.wbFinalURL"
+            [(ngModel)]="orderEdited.wbFinalURL">
+    </div>
+
+
+    <br>
+    <br>
+
+
+
+
+    <p class="help-block inputtextsize text-center">Between What Hours Are Deliveries Accepted?</p>
+    <input class="help-block inputtextsize text-center form-control col-sm-offset-8 col-sm-8" type="text" name="orderEdited.sDeliveryHours"
+        placeholder="Delivery Hours" required [(ngModel)]="orderEdited.sDeliveryHours">
+    <br>
+    <br>
+    <br>
+
+
+
+    <p class="help-block inputtextsize text-center">What Industry Does Company Operate In?</p>
+    <div class="row text-center">
+        <div class="col-sm-offset-4 col-sm-4">
+            <select class="help-block text-center form-control" name="orderEdited.sIndustry" [(ngModel)]="orderEdited.sIndustry">
+                <option value="Architects/Designers">Architects/Designers</option>
+                <option value="Construction">Construction</option>
+                <option value="Disaster Relief/NGO">Disaster Relief/NGO</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Gallery/Museum">Gallery/Museum</option>
+                <option value="Office">Office</option>
+                <option value="Office Channel Partners">Office Channel Partners</option>
+                <option value="Retail">Retail</option>
+                <option value="Retail Channel Partners">Retail Channel Partners</option>
+                <option value="Storage/Warehouse">Storage/Warehouse</option>
+                <option value="Trade Show/Conventions">Trade Show/Conventions</option>
+                <option value="Trade Show Channel Partners">Trade Show Channel Partners</option>
+                <option value="other">other</option>
+
+            </select>
+        </div>
+
+    </div>
+    <!-- <input class="help-block inputtextsize text-center form-control" type="text" name="orderEdited.sIndustry" placeholder="Industry?"
+      required [(ngModel)]="orderEdited.sIndustry"> -->
+
+
+    <br>
+    <div class="row">
+        <div class="col-sm-3 text-center">
+        </div>
+        <div class="col-sm-6 text-center">
+
+            <div *ngIf="orderEdited.sIndustry == 'Trade Show/Conventions' || orderEdited.sIndustry == 'Trade Show Channel Partners'">
+                <p class="help-block instructiontextsize text-center">Will this order be delivered directly to a Trade Show/ Convention?
+                    <i class='glyphicon glyphicon-info-sign ctooltip isize'>
+                        <span class='ctooltiptext'>If this delivery is being sent directly to a Trade Show or a Convention that will effect the shipping
+                            cost.
+                        </span>
+                    </i>
+                </p>
+                <select name="orderEdited.deliveryTradeConvention" class="dropdownsize" required [(ngModel)]="orderEdited.deliveryTradeConvention">
+                    <option value="yes">yes</option>
+                    <option value="no">no</option>
+                </select>
+
+            </div>
+
+
+            <p class="help-block instructiontextsize text-center">Is there a pallet jack at the delivery address?
+                <i class='glyphicon glyphicon-info-sign ctooltip isize'>
+                    <span class='ctooltiptext'>If the company has a pallet jack then a forklift is not needed to bring the pallet inside the delivery
+                        location.
+                    </span>
+                </i>
+            </p>
+            <select name="orderEdited.sPalletJack" class="dropdownsize" required [(ngModel)]="orderEdited.sPalletJack">
+                <option value="yes">yes</option>
+                <option value="no">no</option>
+            </select>
+
+            <br>
+
+
+            <p class="help-block instructiontextsize text-center">Is there a loading dock or a forklift at the delivery address?
+                <i class='glyphicon glyphicon-info-sign ctooltip isize'>
+                    <span class='ctooltiptext'>If you do not have either a dock or a forklift, and your shipment is over 100 lbs, then a special trailer
+                        with a hydraulic lift will be used to get your shipment to the ground.</span>
+                </i>
+            </p>
+            <select name="orderEdited.sLoadingDock" class="dropdownsize" required [(ngModel)]="orderEdited.sLoadingDock">
+                <option value="yes">yes</option>
+                <option value="no">no</option>
+            </select>
+
+            <br>
+
+
+            <div *ngIf='orderEdited.sLoadingDock == "no" '>
+                <p class="help-block instructiontextsize text-center">Is inside delivery required?
+                    <i class='glyphicon glyphicon-info-sign ctooltip isize'>
+                        <span class='ctooltiptext'>If the delivery driver has to bring the shipment inside an office building or more than a few feet
+                            past the rear of the trailer, inside delivery will apply.</span>
+                    </i>
+                </p>
+                <select name="orderEdited.sInsideDelivery" class="dropdownsize" required [(ngModel)]="orderEdited.sInsideDelivery">
+                    <option value="yes">yes</option>
+                    <option value="no">no</option>
+                </select>
+            </div>
+            <br>
+            <br>
+        </div>
+        <div *ngIf="errorCheck && !orderEdited.sLoadingDock" class="alert alert-danger errorsize text-center">Please Select An Option</div>
+    </div>
+
+    <br>
+
+
+    <div class="row" *ngIf="userLevel >= 5">
+
+        <!-- <div *ngIf="invoicing == true" class="text-center">
+            <div class="col-sm-4">
+                <p class="help-block inputtextsize text-center">Does Order Need Production?</p>
+                <input class="help-block checkbox text-center form-control col-xs-4" type="checkbox" name="orderEdited.needsProduction" required
+                    [(ngModel)]="orderEdited.needsProduction">
+            </div>
+        </div> -->
+
+
+
+        <div *ngIf="invoicing == true" class="text-center">
+            <div class="col-sm-4 col-centered">
+                <p class="help-block inputtextsize text-center">Order Payment Terms</p>
+                <br>
+                <select class="help-block text-center form-control" name="orderEdited.paymentTerms" [(ngModel)]="orderEdited.paymentTerms"
+                    (change)="checkForOther(orderEdited.paymentTerms)">
+                    <option value="50 Down Payment">50% Down Payment</option>
+                    <option value="30 Days From Shipment">30 Days From Shipment</option>
+                    <option value="Paid Up Front">Paid Up Front</option>
+                    <option value="Other">Other (not automated)</option>
+                </select>
+            </div>
+        </div>
+
+
+
+
+        <!-- <div *ngIf="invoicing == true" class="text-center">
+            <div class="col-sm-4">
+                <p class="help-block inputtextsize text-center">Automatically Fire Invoice?</p>
+                <br>
+                <input class="checkbox text-center form-control col-xs-4" type="checkbox" name="orderEdited.automaticFire" required
+                    [(ngModel)]="orderEdited.automaticFire">
+            </div>
+        </div> -->
+
+    </div>
+
+    <br>
+    <br>
+
+
+    <div class="text-center">
+
+        <div class="row">
+            <ngx-flash-messages></ngx-flash-messages>
+        </div>
+
+
+        <div class="row">
+            <p class="errmsg col-sm-12 text-center" *ngIf="errorMsg && !data">{{errorMsg}}</p>
+        </div>
+
+        <div *ngIf="errorCheck" class="alert alert-danger errorsize row">Please Make Sure To Fill In All Required Fields And Submit For Invoicing Before Processing</div>
+
+        
+
+        
+
+        
+
+        <div class="row" *ngIf="userLevel >= 7">
+
+            <input type="submit" (click)="onSubmitUpdatedOrderThroughClick(orderEdited)" class="btn displaybutton text-center col-sm-4"
+                value="Save Draft Order">
+
+            <div class="col-sm-4"></div>
+
+
+            <input *ngIf="!orderEdited.sFirstName || !orderEdited.sLastName || !orderEdited.sCity || !orderEdited.sState || !orderEdited.sZip || !orderEdited.sCountry || !orderEdited.sCompany || !orderEdited.sPhone || !orderEdited.sEmail || !orderEdited.sAddress1 || !orderEdited.bFirstName || !orderEdited.bLastName || !orderEdited.bCity || !orderEdited.bState || !orderEdited.bZip || !orderEdited.bCountry || !orderEdited.bCompany || !orderEdited.bPhone || !orderEdited.bEmail || !orderEdited.bAddress1 || !orderEdited.sLoadingDock || !orderEdited.sDeadLine || !orderEdited.lineItems[0] || orderEdited.erp2qboinvoice == null || orderEdited.erp2qbocustomer == null"
+                (click)="errorCheckFunction()" class="btn displaybutton text-center col-sm-4" value="Submit Order For Processing">
+
+
+
+
+
+            <input type="submit" *ngIf="orderEdited.sFirstName && orderEdited.sLastName && orderEdited.sCity && orderEdited.sState && orderEdited.sZip && orderEdited.sCountry && orderEdited.sCompany && orderEdited.sPhone && orderEdited.sEmail && orderEdited.sAddress1 && orderEdited.bFirstName && orderEdited.bLastName && orderEdited.bCity && orderEdited.bState && orderEdited.bZip && orderEdited.bCountry && orderEdited.bCompany && orderEdited.bPhone && orderEdited.bEmail && orderEdited.bAddress1  && orderEdited.sLoadingDock && orderEdited.sDeadLine && orderEdited.lineItems[0] && orderEdited.erp2qboinvoice != null && orderEdited.erp2qbocustomer != null"
+                (click)="onSubmitOrderForProcessing(orderEdited)" class="btn displaybutton text-center col-sm-4" value="Submit Order For Processing">
+
+            <!-- <input type="submit" (click)="onSubmitOrderForProcessing(orderEdited)" class="btn displaybutton text-center col-sm-4" value="test button"> -->
+
+        </div>
+
+        <div class="row" *ngIf="userLevel >= 3 && userLevel < 7">
+
+            <input type="submit" (click)="onSubmitUpdatedOrderThroughClick(orderEdited)" class="btn displaybutton text-center col-sm-4"
+                value="Save Draft Order">
+
+            <div class="col-sm-4"></div>
+
+
+            <input *ngIf="!orderEdited.sFirstName || !orderEdited.sLastName || !orderEdited.sCity || !orderEdited.sState || !orderEdited.sZip || !orderEdited.sCountry || !orderEdited.sCompany || !orderEdited.sPhone || !orderEdited.sEmail || !orderEdited.sAddress1 || !orderEdited.bFirstName || !orderEdited.bLastName || !orderEdited.bCity || !orderEdited.bState || !orderEdited.bZip || !orderEdited.bCountry || !orderEdited.bCompany || !orderEdited.bPhone || !orderEdited.bEmail || !orderEdited.bAddress1 || !orderEdited.sLoadingDock || !orderEdited.sDeadLine || !orderEdited.lineItems[0]"
+                (click)="errorCheckFunction()" class="btn displaybutton text-center col-sm-4" value="Submit Order For Processing">
+
+
+
+            <input type="submit" *ngIf="orderEdited.sFirstName && orderEdited.sLastName && orderEdited.sCity && orderEdited.sState && orderEdited.sZip && orderEdited.sCountry && orderEdited.sCompany && orderEdited.sPhone && orderEdited.sEmail && orderEdited.sAddress1 && orderEdited.bFirstName && orderEdited.bLastName && orderEdited.bCity && orderEdited.bState && orderEdited.bZip && orderEdited.bCountry && orderEdited.bCompany && orderEdited.bPhone && orderEdited.bEmail && orderEdited.bAddress1  && orderEdited.sLoadingDock && orderEdited.sDeadLine && orderEdited.lineItems[0]"
+                (click)=" submitOrderForInvoicing(orderEdited); onSubmitOrderChangeToProcessing(orderEdited)" class="btn displaybutton text-center col-sm-4"
+                value="Submit Order For Processing">
+
+        </div>
+    </div>
+    <!-- </form> -->
+    <br>
+    <br>
+
+</div>
+
+
+
+<!-- <div *ngIf="editable === false">
+      <p class="orderfont">This cannot be edited</p>
+      <p class="orderfont">Order ID: {{wooid}}</p>
+    </div> -->
+
+
+
+
+
+<br>
+<br>
+
+
+
+<br>
+<br>
+<br>
+<br>

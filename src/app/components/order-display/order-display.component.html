@@ -1,0 +1,191 @@
+<div class="container">
+
+    <h1 class="text-center headerfont">Orders</h1>
+
+    <div class="row">
+        <button class="col orderborder displaybutton orderfont" (click)="createNewOrder()">Create New Order</button>
+    </div>
+
+    <div class='form-group bottom-border'>
+
+        <br>
+        <br>
+        <!-- <div class="col-xs-12">
+                <p class="orderfont">
+                    <b>Search Orders Using ID, Sales Person Name, or Status: </b>
+                    <input type="text" #orderFilter (keyup)="filterOrders(orderFilter.value)"> </p>
+            </div> -->
+
+        <br>
+
+        <button class="filterborder displaybutton orderfont" *ngIf="showFilterOptions == false" (click)="showFilterObject()">Click To Show Filter Order Results</button>
+        <button class="filterborder displaybutton orderfont" *ngIf="showFilterOptions == true" (click)="hideFilterObject()">Click To Hide Filter Order Results</button>
+
+        <br>
+        <br>
+
+        <div *ngIf="showFilterOptions == true">
+
+
+            <div class='row'>
+
+
+                <div class="col-md-2 text-center">
+                    <label for="orderNumber">Order Number</label>
+                    <input class="filterInput text-center" [(ngModel)]="filterObject.orderNumber" placeholder="Search Order Number">
+
+                </div>
+                <div class="col-md-1 text-center">
+                    <label for="Total">Total</label>
+                    <input class="filterInput text-center" [(ngModel)]="filterObject.total" placeholder="Search Total">
+
+                </div>
+                <div class="col-md-4 text-center">
+                    <label for="Company Name">Company Name</label>
+                    <br>
+                    <input class="filterInput text-center" [(ngModel)]="filterObject.companyName" placeholder="Search Company Name">
+
+                </div>
+                <div class="col-md-3 text-center">
+                    <label for="Industry">Industry</label>
+                    <select [(ngModel)]="filterObject.industry">
+                        <option *ngFor="let newIndustry of industryList" [value]="newIndustry">{{newIndustry}}</option>
+                    </select>
+                </div>
+                <div class="col-md-2 text-center">
+                    <label for="Status">Status</label>
+                    <br>
+                    <select [(ngModel)]="filterObject.status">
+                        <option *ngFor="let newStatus of statusList" [value]="newStatus">{{newStatus}}</option>
+                    </select>
+                </div>
+
+
+            </div>
+            <br>
+            <div class="row text-center">
+                <div class="col-sm-3 text-center">
+                    <!-- Add date search functionality here -->
+                    <button class="orderborder displaybutton orderfont text-center" (click)="ngOnInit()">Clear Filters</button>
+                </div>
+                <div class="col-sm-9 text-center">
+                    <!-- Add date search functionality here -->
+                    <button class="orderborder displaybutton orderfont text-center" (click)="filter(filterObject)">Filter Orders</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class='row'>
+
+            <div class="col-md-1 orderpadding text-center orderfont pointer" (click)="sort('orderNumber')">
+                Order ID
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'orderNumber', 'glyphicon-arrow-up': (column == 'orderNumber' && isDesc), 'glyphicon-arrow-down': (column == 'orderNumber' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-1 orderpadding text-center orderfont pointer" (click)="sort('invoiceFinalTotal')">
+                Total
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'invoiceFinalTotal', 'glyphicon-arrow-up': (column == 'invoiceFinalTotal' && isDesc), 'glyphicon-arrow-down': (column == 'invoiceFinalTotal' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-2 orderpadding text-center orderfont pointer" (click)="sort('bCompany')">
+                Company Name
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'bCompany', 'glyphicon-arrow-up': (column == 'bCompany' && isDesc), 'glyphicon-arrow-down': (column == 'bCompany' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-2 orderpadding text-center orderfont pointer" (click)="sort('sIndustry')">
+                Industry
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'sIndustry', 'glyphicon-arrow-up': (column == 'sIndustry' && isDesc), 'glyphicon-arrow-down': (column == 'sIndustry' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-1 orderpadding text-center orderfont pointer" (click)="sort('status')">
+                Production Status
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'status', 'glyphicon-arrow-up': (column == 'status' && isDesc), 'glyphicon-arrow-down': (column == 'status' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-1 orderpadding text-center orderfont pointer" (click)="sort('invoiceStatus')">
+                Invoice Status
+                <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'invoiceStatus', 'glyphicon-arrow-up': (column == 'invoiceStatus' && isDesc), 'glyphicon-arrow-down': (column == 'invoiceStatus' && !isDesc) }"
+                    aria-hidden="true"> </i>
+            </div>
+            <div class="col-md-2 orderpadding text-center orderfont pointer">
+                Customer Shipping Address
+            </div>
+            <div class="col-md-2 orderpadding text-center orderfont pointer">
+                Installer Address
+            </div>
+
+        </div>
+        <!-- <div class='col-xs-12'>
+
+                <div class="col-xs-2 orderpadding text-center orderfont pointer" >
+                    <select (change)="filter(statDropdown.value)" id="statDropdown" [(ngModel)]="statDropdown">
+                        <option *ngFor='let stat of statusTypes' [ngValue]='stat'>{{stat}}</option>
+                    </select>
+                </div>
+                <div class="col-xs-1 orderpadding text-center orderfont pointer" (click)="sort('invoiceFinalTotal')">
+                    Total
+                    <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'invoiceFinalTotal', 'glyphicon-arrow-up': (column == 'invoiceFinalTotal' && isDesc), 'glyphicon-arrow-down': (column == 'invoiceFinalTotal' && !isDesc) }"
+                        aria-hidden="true"> </i>
+                </div>
+                <div class="col-xs-4 orderpadding text-center orderfont pointer" (click)="sort('bCompany')">
+                    Company Name
+                    <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'bCompany', 'glyphicon-arrow-up': (column == 'bCompany' && isDesc), 'glyphicon-arrow-down': (column == 'bCompany' && !isDesc) }"
+                        aria-hidden="true"> </i>
+                </div>
+                <div class="col-xs-3 orderpadding text-center orderfont pointer" (click)="sort('sIndustry')">
+                    Industry
+                    <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'sIndustry', 'glyphicon-arrow-up': (column == 'sIndustry' && isDesc), 'glyphicon-arrow-down': (column == 'sIndustry' && !isDesc) }"
+                        aria-hidden="true"> </i>
+                </div>
+                <div class="col-xs-2 orderpadding text-center orderfont pointer" (click)="sort('status')">
+                    Status
+                    <i class="glyphicon sortsize" [ngClass]="{'glyphicon-sort': column != 'status', 'glyphicon-arrow-up': (column == 'status' && isDesc), 'glyphicon-arrow-down': (column == 'status' && !isDesc) }"
+                        aria-hidden="true"> </i>
+                </div>
+
+            </div> -->
+
+
+        <div class='row orderdetailselect' style="border: 1px solid #00abc5" *ngFor="let Order of orders | orderBy: {property: column, direction: direction}">
+
+            <a [routerLink]="['/order-editable-check', Order.orderNumber]" class="orderdetailselect">
+                <div class="col-md-1 orderpadding text-center orderfont">
+                    {{ Order.orderNumber }}
+                </div>
+                <div class="col-md-1 orderpadding text-center orderfont">
+                    {{ Order.finalTotal | currency:'USD':true }}
+                </div>
+                <div class="col-md-2 orderpadding text-center orderfont">
+                    {{ Order.bCompany }}
+                </div>
+                <div class="col-md-2 orderpadding text-center orderfont">
+                    {{ Order.sIndustry }}
+                </div>
+                <div class="col-md-1 orderpadding text-center orderfont" [ngClass]="{processing: Order.status == 'processing', completed: Order.status == 'completed', draft: Order.status == 'draft',  NA: Order.status == 'N/A', cancelled: Order.status == 'cancelled', submitted: Order.status == 'submitted', approvalNeeded: Order.status == 'Waiting For Approval', invoicepartiallypaid: Order.status == 'invoice partially paid', shipped: Order.status == 'shipped'}">
+                    {{ Order.status }}
+                </div>
+                <div class="col-md-1 orderpadding text-center orderfont" [ngClass]="{downpaymentrequested: Order.invoiceStatus == 'Down Payment Requested', processing: Order.invoiceStatus == 'down payment requested', completed: Order.invoiceStatus == 'fully paid', draft: Order.invoiceStatus == 'Not Invoiced', cancelled: Order.invoiceStatus == 'cancelled', submitted: Order.invoiceStatus == 'Full Payment Requested', invoicepartiallypaid: Order.invoiceStatus == 'invoice partially paid', shipped: Order.invoiceStatus == 'Waiting On Shipment' || 'awaiting shipment'}">
+                    {{ Order.invoiceStatus }}
+                </div>
+                <div class="col-md-2 orderpadding text-center orderfont">
+                    {{ Order.sAddress1 }}  {{ Order.sCity }} {{ Order.sState }} {{ Order.sZip }}
+                </div>
+                <div class="col-md-2 orderpadding text-center orderfont">
+                    {{ Order.iAddress }}  {{ Order.iCity }} {{ Order.iState }} {{ Order.iPostalCode }}
+                </div>
+            </a>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+</div>
